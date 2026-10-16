@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'core/theme/app_colors.dart';
 import 'features/main_layout.dart';
 
 void main() {
@@ -12,10 +13,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme:ThemeData(
-        fontFamily: 'Manrope'
+      theme: ThemeData(
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
+        ),
+        fontFamily: 'Manrope',
       ),
       debugShowCheckedModeBanner: false,
-        title: 'bloom habit tracker', home: MainLayout());
+      title: 'bloom habit tracker',
+      home: MainLayout(),
+    );
   }
 }

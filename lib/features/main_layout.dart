@@ -18,7 +18,10 @@ class _MainLayoutState extends State<MainLayout> {
   int _currentPageIndex = 0;
 
   List<Widget> get _pages => [
-    const HomeScreen(),
+    HomeScreen(
+      onMyHabitsTap: () => setState(() => _currentPageIndex = 1),
+      onProgressTap: () => setState(() => _currentPageIndex = 2),
+    ),
     const HabitsScreen(),
     const ProgressScreen(),
     const DiscoverScreen(),
@@ -42,7 +45,7 @@ class _MainLayoutState extends State<MainLayout> {
               style: TextStyle(
                 fontWeight: FontWeight.w800,
                 fontSize: 26,
-                height: 35,
+
                 letterSpacing: -1.3,
               ),
             ),
