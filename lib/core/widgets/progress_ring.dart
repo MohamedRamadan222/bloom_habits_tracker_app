@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 class ProgressRing extends StatelessWidget {
@@ -77,7 +78,7 @@ class _RingPainter extends CustomPainter {
   @override
   bool shouldRepaint(_RingPainter old) =>
       old.progress != progress ||
-          old.color != color ||
-          old.trackColor != trackColor ||
-          old.strokeWidth != strokeWidth;
+      old.color != color ||
+      old.trackColor != trackColor ||
+      old.strokeWidth != strokeWidth;
 }

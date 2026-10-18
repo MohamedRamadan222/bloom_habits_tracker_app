@@ -7,7 +7,9 @@ import '../../../../core/widgets/calender_header.dart';
 import '../../../../core/widgets/custom_header.dart';
 import '../../../../core/widgets/daily_summary.dart';
 
+import '../../../habits/models/habit.dart';
 import '../widgets/daily_habit.dart';
+import '../widgets/habit_draft.dart';
 import '../widgets/home_banner.dart';
 import '../widgets/segmented_tabs.dart';
 import '../widgets/title_and_count_widget.dart';
@@ -29,6 +31,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedTab = 0;
   DateTime _selectedDate = DateUtils.dateOnly(DateTime.now());
+  final List<Habit> _habits = [];
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +47,10 @@ class _HomeScreenState extends State<HomeScreen> {
               PageHeader.home(
                 title: 'A good day to grow.',
                 subtitle: 'Hello, Alex',
+                onActionPressed: () => showHabitSheet(
+                  context,
+                  onSave: (habit) => setState(() => _habits.add(habit)),
+                ),
               ),
               Gap(23),
               // Banner Encouragement
@@ -81,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: 10,
-                separatorBuilder: (_, __) => const Gap(10),
+                separatorBuilder: (_, _) => const Gap(10),
                 itemBuilder: (context, index) {
                   return HabitCard(
                     icon: LucideIcons.personStanding,

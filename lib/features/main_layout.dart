@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import 'home/presentation/widgets/show_name_sheet.dart';
+
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
 
@@ -52,17 +54,22 @@ class _MainLayoutState extends State<MainLayout> {
           ],
         ),
         actions: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: AppColors.lavender,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              LucideIcons.user,
-              size: 18,
-              color: AppColors.secondaryColor,
+          GestureDetector(
+            onTap: () {
+              showNameSheet(context, onSave: (name) => debugPrint(name));
+            },
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: AppColors.lavender,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                LucideIcons.user,
+                size: 18,
+                color: AppColors.secondaryColor,
+              ),
             ),
           ),
           Gap(24),

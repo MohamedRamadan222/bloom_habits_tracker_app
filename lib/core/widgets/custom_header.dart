@@ -49,10 +49,7 @@ class PageHeader extends StatelessWidget {
                   letterSpacing: -1.3,
                 ),
               ),
-              if (!_isHome) ...[
-                const Gap(6),
-                _Subtitle(text: subtitle),
-              ],
+              if (!_isHome) ...[const Gap(6), _Subtitle(text: subtitle)],
             ],
           ),
         ),

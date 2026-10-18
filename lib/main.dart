@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-
-import 'core/theme/app_colors.dart';
 import 'features/main_layout.dart';
 
 void main() {

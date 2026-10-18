@@ -39,10 +39,7 @@ class _TitleAndCountWidgetState extends State<TitleAndCountWidget> {
               ),
               Gap(8),
               Container(
-                constraints: const BoxConstraints(
-                  minWidth: 22,
-                  minHeight: 22,
-                ),
+                constraints: const BoxConstraints(minWidth: 22, minHeight: 22),
                 padding: const EdgeInsets.symmetric(horizontal: 6),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
@@ -50,11 +47,8 @@ class _TitleAndCountWidgetState extends State<TitleAndCountWidget> {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                 widget.count.toString(),
-                  style: TextStyle(
-                    color: AppColors.primaryColor,
-                    fontSize: 11,
-                  ),
+                  widget.count.toString(),
+                  style: TextStyle(color: AppColors.primaryColor, fontSize: 11),
                 ),
               ),
             ],
@@ -73,10 +67,7 @@ class _TitleAndCountWidgetState extends State<TitleAndCountWidget> {
             children: [
               Text(
                 'Manage',
-                style: TextStyle(
-                  color: AppColors.primaryColor,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: AppColors.primaryColor, fontSize: 12),
               ),
               Gap(5),
               Icon(
