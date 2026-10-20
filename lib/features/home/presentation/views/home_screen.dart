@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../../../../core/mock/mock_data.dart';
+import '../../../../core/constants/constants.dart';
+import '../../../../core/data/habit_item.dart';
 import '../../../../core/widgets/calender_header.dart';
 import '../../../../core/widgets/custom_header.dart';
 import '../../../../core/widgets/daily_summary.dart';
-
-import '../../../habits/models/habit.dart';
+import '../../cubit/home_cubit.dart';
 import '../widgets/daily_habit.dart';
 import '../widgets/habit_draft.dart';
 import '../widgets/home_banner.dart';
 import '../widgets/segmented_tabs.dart';
 import '../widgets/title_and_count_widget.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   final VoidCallback onMyHabitsTap;
   final VoidCallback onProgressTap;
 
@@ -24,79 +24,80 @@ class HomeScreen extends StatefulWidget {
     required this.onProgressTap,
   });
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  int _selectedTab = 0;
-  DateTime _selectedDate = DateUtils.dateOnly(DateTime.now());
-  final List<Habit> _habits = [];
+  String _subtitle(HabitProgress e) {
+    final h = e.habit;
+    final status = e.isDone
+        ? ' · Done'
+        : e.done > 0
+        ? ' · ${e.done}/${h.goal}'
+        : '';
+    return '${h.goal} ${h.unit} · ${periods[h.period].label}$status';
+  }
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<HomeCubit>();
+    final s = context.watch<HomeCubit>().state;
+    final visible = s.visible;
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Gap(8),
-              // Header
+              const Gap(8),
               PageHeader.home(
                 title: 'A good day to grow.',
                 subtitle: 'Hello, Alex',
-                onActionPressed: () => showHabitSheet(
-                  context,
-                  onSave: (habit) => setState(() => _habits.add(habit)),
-                ),
+                onActionPressed: () =>
+                    showHabitSheet(context, onSave: cubit.add),
               ),
-              Gap(23),
-              // Banner Encouragement
-              HomeBanner(),
-              Gap(14),
-              // Daily summary
+              const Gap(23),
+              const HomeBanner(),
+              const Gap(14),
               DailySummary(
-                onTap: widget.onProgressTap,
-                done: 6,
-                total: 20,
-                streakDays: 7,
+                onTap: onProgressTap,
+                done: s.doneCount,
+                total: s.items.length,
+                streakDays: s.streak,
               ),
-              Gap(24),
-              // Calendar toolbar
+              const Gap(24),
               WeekCalendar(
-                selectedDate: _selectedDate,
-                onDateSelected: (day) => setState(() => _selectedDate = day),
+                selectedDate: s.date,
+                onDateSelected: cubit.selectDate,
               ),
-              Gap(24),
-              // Title and count
+              const Gap(24),
               TitleAndCountWidget(
-                onPressed: widget.onMyHabitsTap,
-                count: MockData.habitsTotal,
+                count: visible.length,
+                onPressed: onMyHabitsTap,
               ),
-              Gap(12),
-              // SegmentedTabs
+              const Gap(12),
               SegmentedTabs(
                 labels: const ['All habits', 'Morning', 'Afternoon', 'Evening'],
-                selectedIndex: _selectedTab,
-                onChanged: (i) => setState(() => _selectedTab = i),
+                selectedIndex: s.tab,
+                onChanged: cubit.selectTab,
               ),
-              Gap(15),
-              // Daily habit list
+              const Gap(15),
+              if (visible.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 32),
+                  child: Text('Nothing planted yet. Tap + to begin.'),
+                ),
               ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: 10,
+                itemCount: visible.length,
                 separatorBuilder: (_, _) => const Gap(10),
-                itemBuilder: (context, index) {
+                itemBuilder: (context, i) {
+                  final e = visible[i];
                   return HabitCard(
-                    icon: LucideIcons.personStanding,
-                    name: 'Morning stretch',
-                    subtitle: '10 minutes · Morning · Done',
-                    isDone: true,
+                    icon: habitIcons[e.habit.iconIndex],
+                    name: e.habit.name,
+                    subtitle: _subtitle(e),
+                    isDone: e.isDone,
                     onTap: () {},
-                    onToggle: () {},
+                    onToggle: () => cubit.toggle(e),
                   );
                 },
               ),

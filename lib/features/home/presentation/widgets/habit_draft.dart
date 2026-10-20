@@ -2,26 +2,36 @@ import 'package:bloom_habit_tracker/core/widgets/close_button_sheet.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/constants.dart';
+import '../../../../core/data/habit_item.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../habits/models/habit.dart';
 
 Future<void> showHabitSheet(
-  BuildContext context, {
-  required ValueChanged<Habit> onSave,
-}) {
+    BuildContext context, {
+      HabitItem? initial,
+      required ValueChanged<HabitItem> onSave,
+      VoidCallback? onDelete,
+    }) {
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     barrierColor: const Color(0xFF3B3355).withValues(alpha: 0.35),
-    builder: (_) => ShowHabitSheet(onSave: onSave),
+    builder: (_) =>
+        ShowHabitSheet(initial: initial, onSave: onSave, onDelete: onDelete),
   );
 }
 
 class ShowHabitSheet extends StatefulWidget {
-  const ShowHabitSheet({super.key, required this.onSave});
+  const ShowHabitSheet({
+    super.key,
+    this.initial,
+    required this.onSave,
+    this.onDelete,
+  });
 
-  final ValueChanged<Habit> onSave;
+  final HabitItem? initial;
+  final ValueChanged<HabitItem> onSave;
+  final VoidCallback? onDelete;
 
   @override
   State<ShowHabitSheet> createState() => _ShowHabitSheetState();
@@ -51,14 +61,17 @@ class _ShowHabitSheetState extends State<ShowHabitSheet> {
 
   void _submit() {
     if (!_valid) return;
+    final now = DateTime.now().millisecondsSinceEpoch;
     widget.onSave(
-      Habit(
+      HabitItem(
+        id: now,
         name: _name.text.trim(),
-        icon: _icon,
+        iconIndex: _icon,
         goal: int.parse(_goal.text.trim()),
         unit: _unit.text.trim(),
         period: _period,
-        color: colors[_color],
+        colorValue: colors[_color].toARGB32(),
+        createdAt: now,
       ),
     );
     Navigator.of(context).pop();

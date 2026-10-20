@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'core/data/habits_repository.dart';
+import 'features/home/cubit/home_cubit.dart';
 import 'features/main_layout.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await HabitsRepository.init();
+  runApp(
+    BlocProvider(
+      create: (_) => HomeCubit(HabitsRepository()),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
