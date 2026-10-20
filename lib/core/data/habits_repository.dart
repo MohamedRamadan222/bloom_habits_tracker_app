@@ -1,10 +1,22 @@
 import 'package:hive_ce_flutter/hive_flutter.dart';
 
-import 'habit_item.dart';
+import '../domain/entities/habit.dart';
+import '../domain/repositories/habits_repository.dart';
+import 'models/habit_model.dart';
 
-class HabitsRepository {
-  final Box _habits = Hive.box('habits');
-  final Box _logs = Hive.box('logs'); // المفتاح: "id|yyyy-MM-dd" → amount
+class HabitsRepositoryImpl implements HabitsRepository {
+  HabitsRepositoryImpl._();
+
+  factory HabitsRepositoryImpl() {
+    if (!Hive.isBoxOpen('habits') || !Hive.isBoxOpen('logs')) {
+      throw StateError('Call HabitsRepositoryImpl.init() first');
+    }
+    return HabitsRepositoryImpl._();
+  }
+
+  Box get _habits => Hive.box('habits');
+
+  Box get _logs => Hive.box('logs');
 
   static Future<void> init() async {
     await Hive.initFlutter();
@@ -12,55 +24,74 @@ class HabitsRepository {
     await Hive.openBox('logs');
   }
 
-  String _k(int id, DateTime d) => '$id|${dayKey(d)}';
+  String _k(String id, DateTime d) => '$id|${dayKey(d)}';
 
-  Future<void> add(HabitItem h) => _habits.put(h.id.toString(), h.toMap());
+  @override
+  Future<void> add(HabitItem h) async {
+    final model = HabitModel.fromEntity(h);
+    await _habits.put(model.id, model.toMap());
+  }
 
-  Future<void> delete(int id) async {
-    await _habits.delete(id.toString());
+  @override
+  Future<void> delete(String id) async {
+    await _habits.delete(id);
     final prefix = '$id|';
     final keys = _logs.keys.where((k) => (k as String).startsWith(prefix));
     await _logs.deleteAll(keys);
   }
 
+  @override
   List<HabitProgress> forDay(DateTime date) {
     final endOfDay = DateTime(
       date.year,
       date.month,
       date.day + 1,
     ).millisecondsSinceEpoch;
+
     final list =
         _habits.values
-            .map((e) => HabitItem.fromMap(e as Map))
-            .where((h) => h.createdAt < endOfDay)
+            .map((e) => HabitModel.fromMap(e as Map))
+            .where((h) => h.isValid && h.createdAt < endOfDay)
             .toList()
           ..sort(
             (a, b) => a.period != b.period
                 ? a.period.compareTo(b.period)
                 : a.id.compareTo(b.id),
           );
-    return list
-        .map(
-          (h) => HabitProgress(h, _logs.get(_k(h.id, date), defaultValue: 0)),
-        )
-        .toList();
+
+    return list.map((h) {
+      final value = _logs.get(_k(h.id, date), defaultValue: 0);
+      final int amount = value is int ? value : 0;
+      return HabitProgress(h, amount);
+    }).toList();
   }
 
-  Future<void> setProgress(int id, DateTime date, int amount) =>
-      _logs.put(_k(id, date), amount < 0 ? 0 : amount);
+  @override
+  Future<void> setProgress(String id, DateTime date, int amount) async {
+    await _logs.put(_k(id, date), amount < 0 ? 0 : amount);
+  }
 
+  @override
   int streak() {
-    final goals = {
-      for (final e in _habits.values) (e as Map)['id'] as int: e['goal'] as int,
-    };
+    final goals = {for (final h in all()) h.id: h.goal};
     final doneDays = <String>{};
+
     for (final key in _logs.keys) {
-      final parts = (key as String).split('|');
-      final goal = goals[int.parse(parts[0])];
-      if (goal != null && (_logs.get(key) as int) >= goal) {
-        doneDays.add(parts[1]);
-      }
+      if (key is! String) continue;
+      final parts = key.split('|');
+      if (parts.length != 2) continue;
+
+      final id = parts[0];
+      final dateStr = parts[1];
+      final goal = goals[id];
+      if (goal == null) continue;
+
+      final value = _logs.get(key);
+      if (value is! int) continue;
+
+      if (value >= goal) doneDays.add(dateStr);
     }
+
     final now = DateTime.now();
     var d = DateTime(now.year, now.month, now.day);
     if (!doneDays.contains(dayKey(d))) d = DateTime(d.year, d.month, d.day - 1);
@@ -71,17 +102,30 @@ class HabitsRepository {
     }
     return n;
   }
-  List<HabitItem> all() => _habits.values
-      .map((e) => HabitItem.fromMap(e as Map))
-      .toList()
-    ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
+  @override
+  List<HabitItem> all() =>
+      _habits.values
+          .map((e) => HabitModel.fromMap(e as Map))
+          .where((h) => h.isValid)
+          .toList()
+        ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+
+  @override
   List<HabitWeek> weeks(List<DateTime> days) => [
     for (final h in all())
       HabitWeek(h, [
         for (final d in days)
-          (_logs.get(_k(h.id, d), defaultValue: 0) as int) >= h.goal,
+          (_logs.get(_k(h.id, d), defaultValue: 0) is int
+                  ? _logs.get(_k(h.id, d), defaultValue: 0) as int
+                  : 0) >=
+              h.goal,
       ]),
   ];
-  Future<void> update(HabitItem h) => _habits.put(h.id.toString(), h.toMap());
+
+  @override
+  Future<void> update(HabitItem h) async {
+    final model = HabitModel.fromEntity(h);
+    await _habits.put(model.id, model.toMap());
+  }
 }

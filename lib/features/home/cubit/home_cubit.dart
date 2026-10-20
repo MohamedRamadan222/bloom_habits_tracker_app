@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart' show DateUtils;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/data/habit_item.dart';
-import '../../../../core/data/habits_repository.dart';
+import '../../../../core/domain/entities/habit.dart';
+import '../../../../core/domain/usecases/add_habit.dart';
+import '../../../../core/domain/usecases/get_day_habits.dart';
+import '../../../../core/domain/usecases/get_streak.dart';
+import '../../../../core/domain/usecases/get_weeks.dart';
+import '../../../../core/domain/usecases/toggle_habit.dart';
+
+enum HomeStatus { initial, loading, loaded, error }
 
 class HomeState {
+  final HomeStatus status;
+  final String? errorMessage;
   final DateTime date;
   final int tab;
   final List<HabitProgress> items;
   final int streak;
 
   const HomeState({
+    this.status = HomeStatus.initial,
+    this.errorMessage,
     required this.date,
     required this.tab,
     required this.items,
@@ -23,35 +33,63 @@ class HomeState {
   int get doneCount => items.where((e) => e.isDone).length;
 
   HomeState copyWith({
+    HomeStatus? status,
+    String? errorMessage,
     DateTime? date,
     int? tab,
     List<HabitProgress>? items,
     int? streak,
-  }) =>
-      HomeState(
-        date: date ?? this.date,
-        tab: tab ?? this.tab,
-        items: items ?? this.items,
-        streak: streak ?? this.streak,
-      );
+  }) => HomeState(
+    status: status ?? this.status,
+    errorMessage: errorMessage ?? this.errorMessage,
+    date: date ?? this.date,
+    tab: tab ?? this.tab,
+    items: items ?? this.items,
+    streak: streak ?? this.streak,
+  );
 }
 
 class HomeCubit extends Cubit<HomeState> {
-  HomeCubit(this._repo)
-      : super(HomeState(
-    date: DateUtils.dateOnly(DateTime.now()),
-    tab: 0,
-    items: const [],
-    streak: 0,
-  )) {
+  final AddHabit addHabitUseCase;
+  final GetDayHabits getDayHabitsUseCase;
+  final GetStreak getStreakUseCase;
+  final GetWeeks getWeeksUseCase;
+  final ToggleHabit toggleHabitUseCase;
+
+  HomeCubit({
+    required this.addHabitUseCase,
+    required this.getDayHabitsUseCase,
+    required this.getStreakUseCase,
+    required this.getWeeksUseCase,
+    required this.toggleHabitUseCase,
+  }) : super(
+         HomeState(
+           date: DateUtils.dateOnly(DateTime.now()),
+           tab: 0,
+           items: const [],
+           streak: 0,
+         ),
+       ) {
     _refresh();
   }
 
-  final HabitsRepository _repo;
-
-  void _refresh([DateTime? date]) {
+  Future<void> _refresh([DateTime? date]) async {
     final d = date ?? state.date;
-    emit(state.copyWith(date: d, items: _repo.forDay(d), streak: _repo.streak()));
+
+    emit(state.copyWith(status: HomeStatus.loading, date: d));
+
+    try {
+      final items = getDayHabitsUseCase(d);
+      final streak = getStreakUseCase();
+
+      emit(
+        state.copyWith(status: HomeStatus.loaded, items: items, streak: streak),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(status: HomeStatus.error, errorMessage: e.toString()),
+      );
+    }
   }
 
   void selectDate(DateTime d) => _refresh(DateUtils.dateOnly(d));
@@ -59,13 +97,30 @@ class HomeCubit extends Cubit<HomeState> {
   void selectTab(int i) => emit(state.copyWith(tab: i));
 
   Future<void> add(HabitItem h) async {
-    await _repo.add(h);
-    _refresh();
+    emit(state.copyWith(status: HomeStatus.loading));
+    try {
+      await addHabitUseCase(h);
+      _refresh();
+    } catch (e) {
+      emit(
+        state.copyWith(status: HomeStatus.error, errorMessage: e.toString()),
+      );
+    }
   }
 
   Future<void> toggle(HabitProgress e) async {
-    await _repo.setProgress(e.habit.id, state.date, e.isDone ? 0 : e.habit.goal);
-    _refresh();
+    try {
+      await toggleHabitUseCase(e, state.date);
+      _refresh();
+    } catch (error) {
+      emit(
+        state.copyWith(
+          status: HomeStatus.error,
+          errorMessage: error.toString(),
+        ),
+      );
+    }
   }
+
   void reload() => _refresh();
 }

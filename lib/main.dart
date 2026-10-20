@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'core/di/injection.dart';
 import 'core/data/habits_repository.dart';
 import 'features/home/cubit/home_cubit.dart';
 import 'features/main_layout.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await HabitsRepository.init();
+
+  await HabitsRepositoryImpl.init();
+
+  await configureDependencies();
+
   runApp(
     BlocProvider(
-      create: (_) => HomeCubit(HabitsRepository()),
+      create: (_) => sl<HomeCubit>(),
       child: const MyApp(),
     ),
   );
@@ -32,7 +36,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       title: 'bloom habit tracker',
-      home: MainLayout(),
+      home: const MainLayout(),
     );
   }
 }

@@ -18,16 +18,21 @@ class MainLayout extends StatefulWidget {
 
 class _MainLayoutState extends State<MainLayout> {
   int _currentPageIndex = 0;
+  late final List<Widget> _pages;
 
-  List<Widget> get _pages => [
-    HomeScreen(
-      onMyHabitsTap: () => setState(() => _currentPageIndex = 1),
-      onProgressTap: () => setState(() => _currentPageIndex = 2),
-    ),
-    const HabitsScreen(),
-    const ProgressScreen(),
-    const DiscoverScreen(),
-  ];
+  @override
+  void initState() {
+    _pages = [
+      HomeScreen(
+        onMyHabitsTap: () => setState(() => _currentPageIndex = 1),
+        onProgressTap: () => setState(() => _currentPageIndex = 2),
+      ),
+      const HabitsScreen(),
+      const ProgressScreen(),
+      const DiscoverScreen(),
+    ];
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +80,7 @@ class _MainLayoutState extends State<MainLayout> {
           Gap(24),
         ],
       ),
-      body: _pages[_currentPageIndex],
+      body: IndexedStack(index: _currentPageIndex, children: _pages),
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
           height: 80,

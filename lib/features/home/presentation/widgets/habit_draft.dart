@@ -1,16 +1,17 @@
 import 'package:bloom_habit_tracker/core/widgets/close_button_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../../core/data/habit_item.dart';
 import '../../../../core/theme/app_colors.dart';
 
 Future<void> showHabitSheet(
-    BuildContext context, {
-      HabitItem? initial,
-      required ValueChanged<HabitItem> onSave,
-      VoidCallback? onDelete,
-    }) {
+  BuildContext context, {
+  HabitItem? initial,
+  required ValueChanged<HabitItem> onSave,
+  VoidCallback? onDelete,
+}) {
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -38,9 +39,9 @@ class ShowHabitSheet extends StatefulWidget {
 }
 
 class _ShowHabitSheetState extends State<ShowHabitSheet> {
-  final _name = TextEditingController();
+    final _name = TextEditingController();
   final _goal = TextEditingController(text: '10');
-  final _unit = TextEditingController(text: 'pages');
+  final _unit = TextEditingController(text: 'unit');
 
   int _icon = 2;
   int _period = 1;
@@ -60,23 +61,22 @@ class _ShowHabitSheetState extends State<ShowHabitSheet> {
   }
 
   void _submit() {
-    if (!_valid) return;
+    if(!_valid) return;
     final now = DateTime.now().millisecondsSinceEpoch;
     widget.onSave(
       HabitItem(
-        id: now,
+        id: widget.initial?.id ?? const Uuid().v4(),
         name: _name.text.trim(),
         iconIndex: _icon,
         goal: int.parse(_goal.text.trim()),
         unit: _unit.text.trim(),
         period: _period,
         colorValue: colors[_color].toARGB32(),
-        createdAt: now,
-      ),
+        createdAt: widget.initial?.createdAt ?? now,
+      )
     );
     Navigator.of(context).pop();
   }
-
   @override
   Widget build(BuildContext context) {
     final keyboard = MediaQuery.viewInsetsOf(context).bottom;
@@ -85,7 +85,9 @@ class _ShowHabitSheetState extends State<ShowHabitSheet> {
       padding: EdgeInsets.only(bottom: keyboard),
       child: Container(
         constraints: BoxConstraints(
-          maxHeight: MediaQuery.sizeOf(context).height * 0.92,
+          maxHeight: MediaQuery
+              .sizeOf(context)
+              .height * 0.92,
         ),
         decoration: const BoxDecoration(
           color: Colors.white,
@@ -166,7 +168,7 @@ class _ShowHabitSheetState extends State<ShowHabitSheet> {
                         width: 44,
                         height: 44,
                         child: Icon(
-                          habitIcons[i],
+                          safeHabitIcon(i),
                           size: 20,
                           color: i == _icon
                               ? AppColors.primaryColor
@@ -233,7 +235,7 @@ class _ShowHabitSheetState extends State<ShowHabitSheet> {
                           child: Column(
                             children: [
                               Icon(
-                                periods[i].icon,
+                                safePeriod(i).icon,
                                 size: 20,
                                 color: i == _period
                                     ? AppColors.primaryColor
@@ -241,7 +243,7 @@ class _ShowHabitSheetState extends State<ShowHabitSheet> {
                               ),
                               const SizedBox(height: 6),
                               Text(
-                                periods[i].label,
+                                safePeriod(i).label,
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
@@ -283,10 +285,10 @@ class _ShowHabitSheetState extends State<ShowHabitSheet> {
                         ),
                         child: i == _color
                             ? const Icon(
-                                Icons.check_rounded,
-                                size: 16,
-                                color: AppColors.primaryColor,
-                              )
+                          Icons.check_rounded,
+                          size: 16,
+                          color: AppColors.primaryColor,
+                        )
                             : null,
                       ),
                     ),
@@ -361,7 +363,7 @@ class _Field extends StatelessWidget {
   final String hint;
   final int maxLength;
   final TextInputType? keyboardType;
-  final TextCapitalization capitalization;
+  final TextCapitalization? capitalization;
   final ValueChanged<String> onChanged;
   final ValueChanged<String>? onSubmitted;
 
@@ -369,9 +371,9 @@ class _Field extends StatelessWidget {
     required this.controller,
     required this.hint,
     required this.maxLength,
-    required this.onChanged,
     this.keyboardType,
-    this.capitalization = TextCapitalization.none,
+    this.capitalization,
+    required this.onChanged,
     this.onSubmitted,
   });
 
@@ -381,7 +383,7 @@ class _Field extends StatelessWidget {
       controller: controller,
       maxLength: maxLength,
       keyboardType: keyboardType,
-      textCapitalization: capitalization,
+      textCapitalization: capitalization ?? TextCapitalization.none,
       textInputAction: onSubmitted == null
           ? TextInputAction.next
           : TextInputAction.done,

@@ -23,3 +23,17 @@ const colors = [
   Color(0xFFE0ECF8),
   Color(0xFFFBE3E8),
 ];
+IconData safeHabitIcon(int index) {
+  if (index < 0 || index >= habitIcons.length) {
+    return habitIcons[0];
+  }
+  return habitIcons[index];
+}
+
+dynamic safePeriod(int index) {
+  if (index < 0 || index >= periods.length) {
+
+    return periods[0];
+  }
+  return periods[index];
+}

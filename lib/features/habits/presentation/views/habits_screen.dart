@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-
-import '../../../../core/data/habits_repository.dart';
+import '../../../../core/domain/repositories/habits_repository.dart';
 import '../../../../core/widgets/custom_header.dart';
 import '../../../home/cubit/home_cubit.dart';
 import '../../../home/presentation/widgets/habit_draft.dart';

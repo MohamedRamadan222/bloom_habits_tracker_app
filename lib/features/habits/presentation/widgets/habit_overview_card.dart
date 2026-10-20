@@ -46,7 +46,7 @@ class HabitOverviewCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
-                  habitIcons[habit.iconIndex],
+                  safeHabitIcon(habit.iconIndex),
                   size: 22,
                   color: const Color(0xff9B82C0),
                 ),
@@ -74,7 +74,7 @@ class HabitOverviewCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _PeriodChip(label: periods[habit.period].label),
+              _PeriodChip(label: safePeriod(habit.period).label),
               TextButton(
                 onPressed: onView,
                 style: TextButton.styleFrom(

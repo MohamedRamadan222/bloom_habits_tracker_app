@@ -31,7 +31,7 @@ class HomeScreen extends StatelessWidget {
         : e.done > 0
         ? ' · ${e.done}/${h.goal}'
         : '';
-    return '${h.goal} ${h.unit} · ${periods[h.period].label}$status';
+    return '${h.goal} ${h.unit} · ${safePeriod(h.period).label}$status';
   }
 
   @override
@@ -92,7 +92,7 @@ class HomeScreen extends StatelessWidget {
                 itemBuilder: (context, i) {
                   final e = visible[i];
                   return HabitCard(
-                    icon: habitIcons[e.habit.iconIndex],
+                    icon: safeHabitIcon(e.habit.iconIndex),
                     name: e.habit.name,
                     subtitle: _subtitle(e),
                     isDone: e.isDone,
