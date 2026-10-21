@@ -14,6 +14,7 @@ Your habits never leave your device.
 [![Coverage](https://img.shields.io/badge/Coverage-93.2%25_on_core_logic-brightgreen)](https://github.com/MohamedRamadan222/bloom_habits_tracker_app)
 [![Tests](https://img.shields.io/badge/Tests-46_passing-brightgreen)](https://github.com/MohamedRamadan222/bloom_habits_tracker_app)
 [![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white)](https://github.com/MohamedRamadan222/bloom_habits_tracker_app)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 </div>
 
@@ -150,6 +151,10 @@ Copy the APK to your device and tap to install (enable *Install unknown apps* on
 - Personal project — built for daily use and as a portfolio piece. Not published to any app store.
 - Data stays on-device. No analytics, no network calls, no permissions required.
 - Streak definition: a day counts when **any** habit reaches its goal (see `HabitsRepositoryImpl.streak()`).
+
+## 📄 License
+
+MIT — see [LICENSE](LICENSE).
 
 <div align="center">
 
