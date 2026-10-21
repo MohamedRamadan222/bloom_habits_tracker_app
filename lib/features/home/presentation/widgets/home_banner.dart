@@ -42,7 +42,7 @@ class HomeBanner extends StatelessWidget {
                     children: [
                       Icon(
                         LucideIcons.sprout,
-                        color: Color(0xff736082),
+                        color: AppColors.bannerMuted,
                         size: 16,
                       ),
                       Gap(5),
@@ -52,7 +52,7 @@ class HomeBanner extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: Color(0xff736082),
+                            color: AppColors.bannerMuted,
                             fontSize: 12,
                           ),
                         ),
@@ -66,7 +66,7 @@ class HomeBanner extends StatelessWidget {
                     child: Text(
                       'Better habits.\nA happier you.',
                       style: TextStyle(
-                        color: Color(0xff4F4068),
+                        color: AppColors.bannerInk,
                         fontSize: 27,
                         fontWeight: FontWeight.bold,
                         height: 1.15,
@@ -78,7 +78,7 @@ class HomeBanner extends StatelessWidget {
                   Text(
                     'A little effort today. A little closer to the person you want to be.',
                     style: TextStyle(
-                      color: Color(0xff736082),
+                      color: AppColors.bannerMuted,
                       fontSize: 11,
                       height: 1.4,
                     ),

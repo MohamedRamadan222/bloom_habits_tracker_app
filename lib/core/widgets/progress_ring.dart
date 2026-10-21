@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 class ProgressRing extends StatelessWidget {
   final double progress; // من 0 إلى 1
   final double size;
@@ -14,8 +16,8 @@ class ProgressRing extends StatelessWidget {
     required this.progress,
     this.size = 44,
     this.strokeWidth = 6,
-    this.color = const Color(0xffB4A0D6),
-    this.trackColor = const Color(0xffEEEAF6),
+    this.color = AppColors.ring,
+    this.trackColor = AppColors.ringTrack,
   });
 
   @override

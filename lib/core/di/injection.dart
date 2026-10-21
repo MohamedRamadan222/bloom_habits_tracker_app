@@ -1,5 +1,6 @@
 import 'package:hive_ce/hive.dart';
 
+import '../../features/progress/cubit/progress_cubit.dart';
 import '../domain/usecases/set_progress.dart';
 import '../domain/usecases/update_habit.dart';
 import '../domain/usecases/delete_habit.dart';
@@ -31,6 +32,7 @@ Future<void> configureDependencies() async {
   sl.registerLazySingleton(() => UpdateHabit(sl()));
   sl.registerLazySingleton(() => DeleteHabit(sl()));
   sl.registerLazySingleton(() => SetProgress(sl()));
+  sl.registerFactory(() => ProgressCubit(repository: sl()));
 
   // Settings
   sl.registerLazySingleton(() => SettingsDatasource(Hive.box('settings')));

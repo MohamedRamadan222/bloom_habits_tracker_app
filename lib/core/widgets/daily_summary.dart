@@ -5,7 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../theme/app_colors.dart';
 
-class DailySummary extends StatefulWidget {
+class DailySummary extends StatelessWidget {
   final VoidCallback onTap;
   final int done;
   final int total;
@@ -19,14 +19,9 @@ class DailySummary extends StatefulWidget {
     required this.onTap,
   });
 
-  @override
-  State<DailySummary> createState() => _DailySummaryState();
-}
-
-class _DailySummaryState extends State<DailySummary> {
   double get _progress {
-    if (widget.total <= 0) return 0;
-    return (widget.done / widget.total).clamp(0.0, 1.0);
+    if (total <= 0) return 0;
+    return (done / total).clamp(0.0, 1.0);
   }
 
   @override
@@ -38,63 +33,73 @@ class _DailySummaryState extends State<DailySummary> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(17),
-        border: Border.all(color: Color(0xffEEECF2), width: 1),
+        border: Border.all(color: AppColors.cardBorder, width: 1),
       ),
       child: Padding(
         padding: const EdgeInsets.all(15),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                ProgressRing(
-                  progress: _progress,
-                  color: Color(0xffAC99D3),
-                  size: 38,
-                ),
-                Gap(10),
-                Column(
-                  children: [
-                    Text(
-                      '${widget.done} of ${widget.total} habits done',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.ink,
-                      ),
-                    ),
-                    Gap(2),
-                    Text(
-                      'Every little bit counts.',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+            ProgressRing(
+              progress: _progress,
+              color: AppColors.lavenderDeep,
+              size: 38,
             ),
+            const Gap(10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '$done of $total habits done',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.ink,
+                    ),
+                  ),
+                  const Gap(2),
+                  const Text(
+                    'Every little bit counts.',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Gap(10),
             GestureDetector(
-              onTap: widget.onTap,
+              onTap: onTap,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                width: 102,
-                height: 30,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 7,
+                ),
                 decoration: BoxDecoration(
-                  color: Color(0xffF5ECDF),
+                  color: AppColors.streakBg,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(LucideIcons.flame, color: Color(0xff80633F), size: 15),
+                    const Icon(
+                      LucideIcons.flame,
+                      color: AppColors.streakInk,
+                      size: 15,
+                    ),
+                    const Gap(6),
                     Text(
-                      '${widget.streakDays} day streak',
-                      style: TextStyle(
+                      '$streakDays day streak',
+                      style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xff80633F),
+                        color: AppColors.streakInk,
                       ),
                     ),
                   ],

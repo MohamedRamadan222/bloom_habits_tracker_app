@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/domain/entities/habit.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/responsive.dart';
 import '../../../../core/widgets/custom_header.dart';
 import '../../../habits/cubit/habits_cubit.dart';
 import '../../../home/cubit/home_cubit.dart';
@@ -39,7 +40,7 @@ class DiscoverScreen extends StatelessWidget {
       habitPreset: HabitItem(
         id: '',
         name: 'A moment of quiet',
-        iconIndex: 12,
+        iconIndex: 3,
         colorValue: 0xFF81C784,
         goal: 5,
         unit: 'minutes',
@@ -56,7 +57,7 @@ class DiscoverScreen extends StatelessWidget {
       habitPreset: HabitItem(
         id: '',
         name: 'Turn a few pages',
-        iconIndex: 4,
+        iconIndex: 2,
         colorValue: 0xFFFFB74D,
         goal: 10,
         unit: 'pages',
@@ -73,7 +74,7 @@ class DiscoverScreen extends StatelessWidget {
       habitPreset: HabitItem(
         id: '',
         name: 'Stay hydrated',
-        iconIndex: 8,
+        iconIndex: 1,
         colorValue: 0xFF64B5F6,
         goal: 8,
         unit: 'glasses',
@@ -90,7 +91,7 @@ class DiscoverScreen extends StatelessWidget {
       habitPreset: HabitItem(
         id: '',
         name: 'Stretch your body',
-        iconIndex: 15,
+        iconIndex: 4,
         colorValue: 0xFFBA68C8,
         goal: 15,
         unit: 'minutes',
@@ -117,8 +118,7 @@ class DiscoverScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
+      body: CenteredContent(
         child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
@@ -149,8 +149,10 @@ class DiscoverScreen extends StatelessWidget {
               ),
             ),
             SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+              // Single column on compact phones: two 130px cards
+              // squeeze the button label into a clip.
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: context.isCompact ? 1 : 2,
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16,
                 mainAxisExtent: 290,
@@ -181,7 +183,7 @@ class _DiscoverBanner extends StatelessWidget {
       width: double.infinity,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: const Color(0xFFEAF2EA),
+        color: AppColors.sageBg,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Stack(
@@ -196,7 +198,7 @@ class _DiscoverBanner extends StatelessWidget {
               child: Icon(
                 LucideIcons.asterisk,
                 size: 150,
-                color: const Color(0xFFC8DEC8),
+                color: AppColors.sageDeep,
               ),
             ),
           ),
@@ -215,7 +217,7 @@ class _DiscoverBanner extends StatelessWidget {
                       height: 1.15,
                       fontWeight: FontWeight.w800,
                       letterSpacing: -0.5,
-                      color: Color(0xFF4A6856),
+                      color: AppColors.pine,
                     ),
                   ),
                   const Gap(6),
@@ -224,7 +226,7 @@ class _DiscoverBanner extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12,
                       height: 1.5,
-                      color: const Color(0xFF4A6856).withValues(alpha: 0.8),
+                      color: AppColors.pine.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -250,7 +252,7 @@ class _DiscoverCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xffEEECF2)),
+        border: Border.all(color: AppColors.cardBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,6 +278,8 @@ class _DiscoverCard extends StatelessWidget {
           const Gap(4),
           Text(
             item.title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
@@ -301,9 +305,13 @@ class _DiscoverCard extends StatelessWidget {
             children: [
               const Icon(LucideIcons.clock, size: 12, color: AppColors.muted),
               const Gap(6),
-              Text(
-                item.durationText,
-                style: const TextStyle(fontSize: 10, color: AppColors.muted),
+              Expanded(
+                child: Text(
+                  item.durationText,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 10, color: AppColors.muted),
+                ),
               ),
             ],
           ),
@@ -311,10 +319,8 @@ class _DiscoverCard extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             height: 40,
-            child: TextButton.icon(
+            child: TextButton(
               onPressed: onTryPressed,
-              icon: const Icon(LucideIcons.plus, size: 16),
-              label: const Text('Try this habit',style: TextStyle(fontSize: 12),),
               style: TextButton.styleFrom(
                 backgroundColor: AppColors.lavender,
                 foregroundColor: AppColors.primaryColor,
@@ -325,6 +331,21 @@ class _DiscoverCard extends StatelessWidget {
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                 ),
+              ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(LucideIcons.plus, size: 16),
+                  Gap(6),
+                  Flexible(
+                    child: Text(
+                      'Try this habit',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

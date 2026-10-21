@@ -69,10 +69,17 @@ class _Subtitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(text, style: TextStyle(color: AppColors.muted, fontSize: 12)),
+        // Flexible: long subtitles wrap instead of overflowing
+        // (e.g. the Progress header at 360dp).
+        Flexible(
+          child: Text(
+            text,
+            style: TextStyle(color: AppColors.muted, fontSize: 12),
+          ),
+        ),
         if (showIcon) ...[
           const Gap(10),
-          const Icon(LucideIcons.sun, color: Color(0xffCA965C), size: 16),
+          const Icon(LucideIcons.sun, color: AppColors.sunAmber, size: 16),
         ],
       ],
     );

@@ -30,7 +30,7 @@ class HabitOverviewCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xffEEECF2)),
+        border: Border.all(color: AppColors.cardBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,7 +48,7 @@ class HabitOverviewCard extends StatelessWidget {
                 child: Icon(
                   safeHabitIcon(habit.iconIndex),
                   size: 22,
-                  color: const Color(0xff9B82C0),
+                  color: AppColors.checkPurple,
                 ),
               ),
               _EditButton(onTap: onEdit),
@@ -115,7 +115,7 @@ class _EditButton extends StatelessWidget {
         height: 36,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: const Color(0xffEEECF2)),
+          border: Border.all(color: AppColors.cardBorder),
         ),
         child: Icon(LucideIcons.pencil, size: 15, color: AppColors.muted),
       ),
@@ -133,7 +133,7 @@ class _PeriodChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: const Color(0xffF4F2F8),
+        color: AppColors.surfaceSubtle,
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(

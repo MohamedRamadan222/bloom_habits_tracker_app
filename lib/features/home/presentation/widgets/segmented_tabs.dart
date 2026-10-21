@@ -19,17 +19,20 @@ class SegmentedTabs extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
-        color: const Color(0xffEEECF2),
+        color: AppColors.cardBorder,
         borderRadius: BorderRadius.circular(10),
       ),
+      // Expanded + FittedBox: equal tabs that shrink their label instead
+      // of overflowing on narrow screens (was a fixed ~350px Row).
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
           for (var i = 0; i < labels.length; i++)
-            _Tap(
-              label: labels[i],
-              isSelected: i == selectedIndex,
-              onTap: () => onChanged(i),
+            Expanded(
+              child: _Tap(
+                label: labels[i],
+                isSelected: i == selectedIndex,
+                onTap: () => onChanged(i),
+              ),
             ),
         ],
       ),
@@ -70,47 +73,19 @@ class _Tap extends StatelessWidget {
                 ]
               : null,
         ),
-        child: AnimatedDefaultTextStyle(
-          duration: const Duration(milliseconds: 200),
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-            color: isSelected ? AppColors.primaryColor : AppColors.muted,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 200),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+              color: isSelected ? AppColors.primaryColor : AppColors.muted,
+            ),
+            child: Text(label, maxLines: 1),
           ),
-          child: Text(label),
         ),
       ),
     );
   }
 }
-
-//         duration: const Duration(milliseconds: 200),
-//         curve: Curves.easeOut,
-//         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-//         decoration: BoxDecoration(
-//           color: isSelected ? Colors.white : Colors.transparent,
-//           borderRadius: BorderRadius.circular(8),
-//           boxShadow: isSelected
-//               ? [
-//                   BoxShadow(
-//                     color: Colors.black.withValues(alpha: 0.04),
-//                     blurRadius: 4,
-//                     offset: const Offset(0, 1),
-//                   ),
-//                 ]
-//               : null,
-//         ),
-//         child: AnimatedDefaultTextStyle(
-//           duration: const Duration(milliseconds: 200),
-//           style: TextStyle(
-//             fontSize: 12,
-//             fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-//             color: isSelected ?
-//             AppColors.primaryColor : AppColors.muted,
-//           ),
-//           child: Text(label),
-//         ),
-//       ),
-//     );
-//   }
-// }

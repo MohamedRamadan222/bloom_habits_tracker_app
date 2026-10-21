@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/data/habit_item.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/responsive.dart';
 
 Future<void> showHabitSheet(
   BuildContext context, {
@@ -16,7 +17,7 @@ Future<void> showHabitSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    barrierColor: const Color(0xFF3B3355).withValues(alpha: 0.35),
+    barrierColor: AppColors.scrim.withValues(alpha: 0.35),
     builder: (_) =>
         ShowHabitSheet(initial: initial, onSave: onSave, onDelete: onDelete),
   );
@@ -149,7 +150,7 @@ class _ShowHabitSheetState extends State<ShowHabitSheet> {
                         Text(
                           isEditing ? 'Edit habit' : 'Plant a new habit',
                           style: TextStyle(
-                            fontSize: 30,
+                            fontSize: context.isCompact ? 26 : 30,
                             fontWeight: FontWeight.w600,
                             letterSpacing: -0.6,
                             color: AppColors.ink,
@@ -176,26 +177,34 @@ class _ShowHabitSheetState extends State<ShowHabitSheet> {
               // icon
               const _Label('Give it a little personality'),
               const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  for (var i = 0; i < habitIcons.length; i++)
-                    _Choice(
-                      selected: i == _icon,
-                      onTap: () => setState(() => _icon = i),
-                      child: SizedBox(
-                        width: 44,
-                        height: 44,
-                        child: Icon(
-                          safeHabitIcon(i),
-                          size: 20,
-                          color: i == _icon
-                              ? AppColors.primaryColor
-                              : AppColors.muted,
+              // Box size shrinks on narrow screens instead of overflowing
+              // (6 x 44px no longer fits below ~330dp).
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final box = (constraints.maxWidth - 5 * 12) / 6;
+                  final size = box >= 44 ? 44.0 : box.clamp(28.0, 44.0);
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      for (var i = 0; i < habitIcons.length; i++)
+                        _Choice(
+                          selected: i == _icon,
+                          onTap: () => setState(() => _icon = i),
+                          child: SizedBox(
+                            width: size,
+                            height: size,
+                            child: Icon(
+                              safeHabitIcon(i),
+                              size: 20,
+                              color: i == _icon
+                                  ? AppColors.primaryColor
+                                  : AppColors.muted,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                ],
+                    ],
+                  );
+                },
               ),
               const SizedBox(height: 24),
               // goal + unit
@@ -320,9 +329,11 @@ class _ShowHabitSheetState extends State<ShowHabitSheet> {
                 children: [
                   Icon(Icons.repeat_rounded, size: 16, color: AppColors.muted),
                   SizedBox(width: 8),
-                  Text(
-                    'Every day is a fresh chance. Start small.',
-                    style: TextStyle(fontSize: 13, color: AppColors.muted),
+                  Expanded(
+                    child: Text(
+                      'Every day is a fresh chance. Start small.',
+                      style: TextStyle(fontSize: 13, color: AppColors.muted),
+                    ),
                   ),
                 ],
               ),
@@ -458,7 +469,7 @@ class _Field extends StatelessWidget {
       style: const TextStyle(fontSize: 16, color: AppColors.ink),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(color: Color(0xFFA1A1AA)),
+        hintStyle: const TextStyle(color: AppColors.hint),
         counterText: '',
         filled: true,
         fillColor: AppColors.field,

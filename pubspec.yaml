@@ -1,5 +1,5 @@
 name: bloom_habit_tracker
-description: "A new Flutter project."
+description: "A local-first habit tracker built with Flutter, Cubit and Hive."
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -24,6 +24,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  bloc_test: ^10.0.0
+  mocktail: ^1.0.4
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.6
 
 flutter:
   uses-material-design: true
@@ -49,3 +53,21 @@ flutter:
           weight: 700
         - asset: assets/fonts/Manrope/Manrope-ExtraBold.ttf
           weight: 800
+
+  # --- App icon (Phase 5.4) ---
+  # Source must be >=512px, ideally 1024x1024 PNG.
+  # assets/icons/appBarIcon.png is only 937B -> replace with
+  # assets/icons/app_icon.png before running.
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/app_icon.png"
+  min_sdk_android: 21
+
+  # --- Splash (Phase 5.4) ---
+flutter_native_splash:
+  color: "#EEE9F8"
+  image: "assets/icons/app_icon.png"
+  android_12:
+    color: "#EEE9F8"
+    image: "assets/icons/app_icon.png"

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/responsive.dart';
 import '../../../../core/widgets/close_button_sheet.dart';
 
 Future<void> showNameSheet(
@@ -12,7 +13,7 @@ Future<void> showNameSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    barrierColor: const Color(0xFF3B3355).withValues(alpha: 0.35),
+    barrierColor: AppColors.scrim.withValues(alpha: 0.35),
     builder: (_) => ShowNameSheet(initialName: initialName, onSave: onSave),
   );
 }
@@ -56,10 +57,13 @@ class _ShowNameSheetState extends State<ShowNameSheet> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: EdgeInsets.fromLTRB(32, 12, 32, 32 + safeBottom),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+        // Scrolls instead of overflowing when the keyboard is open
+        // on short screens (same pattern as the habit sheet).
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
             // handel
             Center(
               child: Container(
@@ -76,19 +80,19 @@ class _ShowNameSheetState extends State<ShowNameSheet> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Make yourself at home',
                         style: TextStyle(fontSize: 14, color: AppColors.muted),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         'Your little space',
                         style: TextStyle(
-                          fontSize: 30,
+                          fontSize: context.isCompact ? 26 : 30,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.6,
                           color: AppColors.ink,
@@ -123,7 +127,7 @@ class _ShowNameSheetState extends State<ShowNameSheet> {
               style: const TextStyle(fontSize: 18, color: AppColors.ink),
               decoration: InputDecoration(
                 hintText: 'Alex',
-                hintStyle: const TextStyle(color: Color(0xFFA1A1AA)),
+                hintStyle: const TextStyle(color: AppColors.hint),
                 counterText: '',
                 filled: true,
                 fillColor: AppColors.field,
@@ -178,7 +182,8 @@ class _ShowNameSheetState extends State<ShowNameSheet> {
                 child: const Text('Save my name'),
               ),
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );

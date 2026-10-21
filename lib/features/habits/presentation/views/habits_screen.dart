@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
 import '../../../../core/data/habit_item.dart';
+import '../../../../core/theme/responsive.dart';
 import '../../../../core/widgets/custom_header.dart';
 import '../../../home/cubit/home_cubit.dart';
 import '../../../home/presentation/widgets/habit_draft.dart';
@@ -58,8 +59,7 @@ class _HabitsView extends StatelessWidget {
     final weeks = context.watch<HabitsCubit>().state;
 
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
+      body: CenteredContent(
         child: Column(
           children: [
             const Gap(8),

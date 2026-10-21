@@ -143,15 +143,15 @@ class _DayCell extends StatelessWidget {
       numberColor = Colors.white;
       dotColor = Colors.white;
     } else if (isFuture) {
-      background = const Color(0xffF8F7FA);
+      background = AppColors.futureBg;
       labelColor = AppColors.muted.withValues(alpha: 0.5);
       numberColor = AppColors.muted;
-      dotColor = const Color(0xffDDD9E3);
+      dotColor = AppColors.dotFuture;
     } else {
       background = Colors.white;
       labelColor = AppColors.muted;
       numberColor = AppColors.ink;
-      dotColor = hasActivity ? AppColors.primaryColor : const Color(0xffC9C3D3);
+      dotColor = hasActivity ? AppColors.primaryColor : AppColors.dotIdle;
     }
 
     return GestureDetector(
@@ -160,15 +160,19 @@ class _DayCell extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
-        height: 72,
+        // Min-height + padding instead of a fixed height: the content
+        // defines the size, so tall fonts can never overflow the cell.
+        constraints: const BoxConstraints(minHeight: 72),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
           color: background,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? Colors.transparent : const Color(0xffEEECF2),
+            color: isSelected ? Colors.transparent : AppColors.cardBorder,
           ),
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
@@ -214,7 +218,7 @@ class _NavButton extends StatelessWidget {
       color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: const BorderSide(color: Color(0xffEEECF2)),
+        side: const BorderSide(color: AppColors.cardBorder),
       ),
       child: InkWell(
         onTap: onTap,

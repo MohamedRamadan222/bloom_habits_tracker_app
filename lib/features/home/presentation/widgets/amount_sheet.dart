@@ -21,7 +21,7 @@ Future<void> showAmountSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    barrierColor: const Color(0xFF3B3355).withValues(alpha: 0.35),
+    barrierColor: AppColors.scrim.withValues(alpha: 0.35),
     builder: (_) => ShowAmountSheet(
       progress: progress,
       date: date,

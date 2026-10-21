@@ -45,7 +45,7 @@ class _DayDot extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: done ? AppColors.lavender : const Color(0xffF4F2F8),
+        color: done ? AppColors.lavender : AppColors.surfaceSubtle,
       ),
       child: done
           ? Icon(LucideIcons.check, size: 14, color: AppColors.primaryColor)

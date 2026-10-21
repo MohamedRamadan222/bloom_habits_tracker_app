@@ -5,7 +5,8 @@ import 'package:gap/gap.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../../core/data/habit_item.dart';
-import '../../../../core/widgets/calender_header.dart';
+import '../../../../core/theme/responsive.dart';
+import '../../../../core/widgets/calendar_header.dart';
 import '../../../../core/widgets/custom_header.dart';
 import '../../../../core/widgets/daily_summary.dart';
 import '../../../habits/cubit/habits_cubit.dart';
@@ -43,8 +44,7 @@ class HomeScreen extends StatelessWidget {
     final visible = s.visible;
 
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
+      body: CenteredContent(
         child: SingleChildScrollView(
           child: Column(
             children: [

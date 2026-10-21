@@ -31,7 +31,7 @@ class HabitCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xffEEECF2)),
+          border: Border.all(color: AppColors.cardBorder),
         ),
         child: Row(
           children: [
@@ -42,7 +42,7 @@ class HabitCard extends StatelessWidget {
                 color: AppColors.lavender,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, size: 22, color: const Color(0xff9B82C0)),
+              child: Icon(icon, size: 22, color: AppColors.checkPurple),
             ),
             const Gap(14),
             Expanded(
@@ -72,8 +72,8 @@ class HabitCard extends StatelessWidget {
                 height: 30,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isDone ? const Color(0xff9B82C0) : Colors.white,
-                  border: Border.all(color: const Color(0xff9B82C0)),
+                  color: isDone ? AppColors.checkPurple : Colors.white,
+                  border: Border.all(color: AppColors.checkPurple),
                 ),
                 child: isDone
                     ? const Icon(
