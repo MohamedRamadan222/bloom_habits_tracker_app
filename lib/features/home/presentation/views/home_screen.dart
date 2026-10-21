@@ -1,3 +1,4 @@
+import 'package:bloom_habit_tracker/features/home/presentation/widgets/amount_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -7,6 +8,7 @@ import '../../../../core/data/habit_item.dart';
 import '../../../../core/widgets/calender_header.dart';
 import '../../../../core/widgets/custom_header.dart';
 import '../../../../core/widgets/daily_summary.dart';
+import '../../../habits/cubit/habits_cubit.dart';
 import '../../cubit/home_cubit.dart';
 import '../widgets/daily_habit.dart';
 import '../widgets/habit_draft.dart';
@@ -49,9 +51,19 @@ class HomeScreen extends StatelessWidget {
               const Gap(8),
               PageHeader.home(
                 title: 'A good day to grow.',
-                subtitle: 'Hello, Alex',
-                onActionPressed: () =>
-                    showHabitSheet(context, onSave: cubit.add),
+                subtitle: s.username != null && s.username!.isNotEmpty
+                    ? 'Hello, ${s.username}'
+                    : 'Hello, friend',
+                onActionPressed: () {
+                  final habitsCubit = context.read<HabitsCubit>();
+                  showHabitSheet(
+                    context,
+                    onSave: (habit) async {
+                      await cubit.add(habit);
+                      habitsCubit.reload();
+                    },
+                  );
+                },
               ),
               const Gap(23),
               const HomeBanner(),
@@ -96,7 +108,28 @@ class HomeScreen extends StatelessWidget {
                     name: e.habit.name,
                     subtitle: _subtitle(e),
                     isDone: e.isDone,
-                    onTap: () {},
+                    onTap: () {
+                      final habitsCubit = context.read<HabitsCubit>();
+                      showAmountSheet(
+                        context,
+                        progress: e,
+                        date: s.date,
+                        onSave: (amount) async {
+                          await cubit.setProgress(e, amount);
+                          habitsCubit.reload();
+                        },
+                        onEdit: () {
+                          showHabitSheet(
+                            context,
+                            initial: e.habit,
+                            onSave: (habit) async {
+                              await cubit.updateHabit(habit);
+                              habitsCubit.reload();
+                            },
+                          );
+                        },
+                      );
+                    },
                     onToggle: () => cubit.toggle(e),
                   );
                 },

@@ -1,10 +1,17 @@
+import 'package:hive_ce/hive.dart';
+
+import '../domain/usecases/set_progress.dart';
+import '../domain/usecases/update_habit.dart';
+import '../domain/usecases/delete_habit.dart';
+
 import 'package:get_it/get_it.dart';
 
 import '../../features/home/cubit/home_cubit.dart';
 import '../data/habits_repository.dart';
 import '../domain/repositories/habits_repository.dart';
-
-
+import '../data/settings_datasource.dart';
+import '../domain/usecases/save_username.dart';
+import '../domain/usecases/get_username.dart';
 import '../domain/usecases/add_habit.dart';
 import '../domain/usecases/get_day_habits.dart';
 import '../domain/usecases/get_streak.dart';
@@ -21,14 +28,27 @@ Future<void> configureDependencies() async {
   sl.registerLazySingleton(() => GetStreak(sl()));
   sl.registerLazySingleton(() => GetWeeks(sl()));
   sl.registerLazySingleton(() => ToggleHabit(sl()));
+  sl.registerLazySingleton(() => UpdateHabit(sl()));
+  sl.registerLazySingleton(() => DeleteHabit(sl()));
+  sl.registerLazySingleton(() => SetProgress(sl()));
+
+  // Settings
+  sl.registerLazySingleton(() => SettingsDatasource(Hive.box('settings')));
+  sl.registerLazySingleton(() => SaveUsername(sl()));
+  sl.registerLazySingleton(() => GetUsername(sl()));
 
   sl.registerFactory(
-        () => HomeCubit(
-      addHabit: sl(),
-      getDayHabits: sl(),
-      getStreak: sl(),
-      getWeeks: sl(),
-      toggleHabit: sl(),
+    () => HomeCubit(
+      addHabitUseCase: sl(),
+      getDayHabitsUseCase: sl(),
+      getStreakUseCase: sl(),
+      getWeeksUseCase: sl(),
+      toggleHabitUseCase: sl(),
+      updateHabitUseCase: sl(),
+      deleteHabitUseCase: sl(),
+      getUsernameUseCase: sl(),
+      saveUsernameUseCase: sl(),
+      setProgressUseCase: sl(),
     ),
   );
 }

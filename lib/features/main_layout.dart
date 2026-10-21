@@ -1,9 +1,11 @@
 import 'package:bloom_habit_tracker/core/theme/app_colors.dart';
 import 'package:bloom_habit_tracker/features/discover/presentation/views/discover_screen.dart';
 import 'package:bloom_habit_tracker/features/habits/presentation/views/habits_screen.dart';
+import 'package:bloom_habit_tracker/features/home/cubit/home_cubit.dart';
 import 'package:bloom_habit_tracker/features/home/presentation/views/home_screen.dart';
 import 'package:bloom_habit_tracker/features/progress/presentation/views/progress_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -61,7 +63,12 @@ class _MainLayoutState extends State<MainLayout> {
         actions: [
           GestureDetector(
             onTap: () {
-              showNameSheet(context, onSave: (name) => debugPrint(name));
+              final homeCubit = context.read<HomeCubit>();
+              final currentName = homeCubit.state.username ?? '';
+              showNameSheet(context,
+              initialName: currentName,
+                onSave: (name) => homeCubit.saveName(name)
+              );
             },
             child: Container(
               width: 36,

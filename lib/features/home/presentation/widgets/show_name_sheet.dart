@@ -147,7 +147,7 @@ class _ShowNameSheetState extends State<ShowNameSheet> {
             const SizedBox(height: 24),
             // Description
             const Text(
-              'Your habits and progress stay in this browser. No account needed.',
+              'Your habits and progress stay on this device. No account needed.',
               style: TextStyle(
                 fontSize: 15,
                 height: 1.8,

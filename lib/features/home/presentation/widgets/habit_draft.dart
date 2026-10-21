@@ -39,7 +39,7 @@ class ShowHabitSheet extends StatefulWidget {
 }
 
 class _ShowHabitSheetState extends State<ShowHabitSheet> {
-    final _name = TextEditingController();
+  final _name = TextEditingController();
   final _goal = TextEditingController(text: '10');
   final _unit = TextEditingController(text: 'unit');
 
@@ -53,6 +53,25 @@ class _ShowHabitSheetState extends State<ShowHabitSheet> {
       _unit.text.trim().isNotEmpty;
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.initial != null) {
+      _name.text = widget.initial!.name;
+      _goal.text = widget.initial!.goal.toString();
+      _unit.text = widget.initial!.unit;
+      _icon = widget.initial!.iconIndex;
+      _period = widget.initial!.period;
+
+      final colorIndex = colors.indexWhere(
+        (c) => c.toARGB32() == widget.initial!.colorValue,
+      );
+      if (colorIndex != -1) {
+        _color = colorIndex;
+      }
+    }
+  }
+
+  @override
   void dispose() {
     _name.dispose();
     _goal.dispose();
@@ -61,7 +80,7 @@ class _ShowHabitSheetState extends State<ShowHabitSheet> {
   }
 
   void _submit() {
-    if(!_valid) return;
+    if (!_valid) return;
     final now = DateTime.now().millisecondsSinceEpoch;
     widget.onSave(
       HabitItem(
@@ -73,21 +92,21 @@ class _ShowHabitSheetState extends State<ShowHabitSheet> {
         period: _period,
         colorValue: colors[_color].toARGB32(),
         createdAt: widget.initial?.createdAt ?? now,
-      )
+      ),
     );
     Navigator.of(context).pop();
   }
+
   @override
   Widget build(BuildContext context) {
     final keyboard = MediaQuery.viewInsetsOf(context).bottom;
     final safeBottom = MediaQuery.paddingOf(context).bottom;
+    final isEditing = widget.initial != null;
     return Padding(
       padding: EdgeInsets.only(bottom: keyboard),
       child: Container(
         constraints: BoxConstraints(
-          maxHeight: MediaQuery
-              .sizeOf(context)
-              .height * 0.92,
+          maxHeight: MediaQuery.sizeOf(context).height * 0.92,
         ),
         decoration: const BoxDecoration(
           color: Colors.white,
@@ -115,20 +134,20 @@ class _ShowHabitSheetState extends State<ShowHabitSheet> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'A small beginning',
-                          style: TextStyle(
+                          isEditing ? 'Make it better' : 'A small beginning',
+                          style: const TextStyle(
                             fontSize: 14,
                             color: AppColors.muted,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
-                          'Plant a new habit',
+                          isEditing ? 'Edit habit' : 'Plant a new habit',
                           style: TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.w600,
@@ -285,10 +304,10 @@ class _ShowHabitSheetState extends State<ShowHabitSheet> {
                         ),
                         child: i == _color
                             ? const Icon(
-                          Icons.check_rounded,
-                          size: 16,
-                          color: AppColors.primaryColor,
-                        )
+                                Icons.check_rounded,
+                                size: 16,
+                                color: AppColors.primaryColor,
+                              )
                             : null,
                       ),
                     ),
@@ -313,8 +332,11 @@ class _ShowHabitSheetState extends State<ShowHabitSheet> {
                 height: 56,
                 child: FilledButton.icon(
                   onPressed: _valid ? _submit : null,
-                  icon: const Icon(Icons.add_rounded, size: 20),
-                  label: const Text('Add to my day'),
+                  icon: Icon(
+                    isEditing ? Icons.save_rounded : Icons.add_rounded,
+                    size: 20,
+                  ),
+                  label: Text(isEditing ? 'Save changes' : 'Add to my day'),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.primaryColor,
                     disabledBackgroundColor: AppColors.primaryColor.withValues(
@@ -332,6 +354,50 @@ class _ShowHabitSheetState extends State<ShowHabitSheet> {
                   ),
                 ),
               ),
+              if (isEditing && widget.onDelete != null) ...[
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        backgroundColor: Colors.white,
+                        surfaceTintColor: Colors.transparent,
+                        title: const Text('Delete Habit?'),
+                        content: const Text(
+                          'Are you sure you want to delete this habit? All associated logs will also be permanently removed.',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                              widget.onDelete!();
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.red,
+                            ),
+                            child: const Text('Delete'),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.red,
+                    textStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  child: const Text('Delete habit'),
+                ),
+              ],
             ],
           ),
         ),
